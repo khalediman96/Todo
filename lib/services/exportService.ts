@@ -19,7 +19,8 @@ export class ExportService {
 
   private static exportToCSV(todos: Todo[], options: any = {}): Blob {
     const {
-      includeCustomFields = true
+      includeCustomFields = true,
+      includeSubtasks = true
     } = options;
 
     // Define CSV headers
@@ -302,16 +303,6 @@ export class ExportService {
       html += `<div class="tags">`;
       todo.tags.forEach(tag => {
         html += `<span class="tag">${this.escapeHTML(tag)}</span>`;
-      });
-      html += `</div>`;
-    }
-    
-    if (todo.subtasks && todo.subtasks.length > 0) {
-      html += `<div class="subtasks">`;
-      html += `<strong>Subtasks (${todo.subtasks.filter(s => s.completed).length}/${todo.subtasks.length}):</strong>`;
-      todo.subtasks.forEach(subtask => {
-        const checkmark = subtask.completed ? '✓' : '○';
-        html += `<div class="subtask">${checkmark} ${this.escapeHTML(subtask.title)}</div>`;
       });
       html += `</div>`;
     }
