@@ -1,0 +1,150 @@
+/* Drag and Drop Performance Optimizations */
+
+/* Global optimizations for better drag performance */
+[data-rbd-draggable-context-id] {
+  /* Enable hardware acceleration for all draggable elements */
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+[data-rbd-droppable-context-id] {
+  /* Contain layout changes to droppable areas */
+  contain: layout style;
+  overflow: hidden;
+}
+
+/* Optimize drag handle performance */
+[data-rbd-drag-handle-context-id] {
+  /* Prepare for smooth dragging */
+  backface-visibility: hidden;
+  perspective: 1000px;
+  cursor: grab !important;
+  transition: transform 0.1s ease-out;
+}
+
+[data-rbd-drag-handle-context-id]:active {
+  cursor: grabbing !important;
+}
+
+/* Dragging state optimizations */
+.react-beautiful-dnd-dragging {
+  /* Disable all transitions during drag for maximum performance */
+  transition: none !important;
+  animation: none !important;
+  will-change: transform;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  perspective: 1000px;
+  /* Use GPU layer */
+  z-index: 9999;
+}
+
+.react-beautiful-dnd-dragging * {
+  /* Disable transitions on all children during drag */
+  transition: none !important;
+  animation: none !important;
+  backface-visibility: hidden;
+}
+
+/* Placeholder optimizations */
+.react-beautiful-dnd-drag-handle + div {
+  /* Optimize placeholder performance */
+  will-change: height, transform;
+  backface-visibility: hidden;
+}
+
+/* Drop zone optimizations */
+.react-beautiful-dnd-droppable {
+  /* Optimize drop zone performance */
+  will-change: background-color, border-color;
+  backface-visibility: hidden;
+}
+
+/* Enhanced kanban card animations for drag */
+.kanban-card[data-rbd-draggable-id] {
+  /* Pre-optimize for dragging */
+  will-change: transform, box-shadow;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Smooth hover states that won't interfere with drag */
+.kanban-card[data-rbd-draggable-id]:hover:not(.react-beautiful-dnd-dragging) {
+  transform: translateY(-2px) translateZ(0);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), 
+              box-shadow 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Enhanced drop zone indicators */
+.kanban-column-content[data-rbd-droppable-id] {
+  position: relative;
+  will-change: background-color, border-color;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Optimized drag preview */
+.react-beautiful-dnd-dragging .kanban-card {
+  transform: rotate(3deg) scale(1.03) translateZ(0);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+  border-radius: 1rem;
+  backdrop-filter: blur(10px);
+}
+
+/* Reduce visual noise during drag */
+.react-beautiful-dnd-dragging ~ .kanban-card {
+  opacity: 0.6;
+  filter: grayscale(0.3);
+  transition: opacity 0.2s ease, filter 0.2s ease;
+}
+
+/* Smooth transitions when drag ends */
+.kanban-card:not(.react-beautiful-dnd-dragging) {
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.2s ease,
+              filter 0.2s ease;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .react-beautiful-dnd-dragging {
+    /* Reduce effects on mobile for better performance */
+    transform: rotate(2deg) scale(1.02) translateZ(0);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+  }
+  
+  .kanban-card[data-rbd-draggable-id]:hover {
+    /* Disable hover effects on mobile */
+    transform: translateZ(0);
+    box-shadow: none;
+  }
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  .react-beautiful-dnd-dragging {
+    transform: scale(1.02) translateZ(0);
+    transition: none;
+  }
+  
+  .kanban-card[data-rbd-draggable-id] {
+    transition: none;
+  }
+  
+  .kanban-column-content[data-rbd-droppable-id] {
+    transition: none;
+  }
+}
+
+/* Performance boost for webkit browsers */
+@supports (-webkit-appearance: none) {
+  [data-rbd-draggable-context-id],
+  [data-rbd-droppable-context-id] {
+    -webkit-transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    -webkit-perspective: 1000px;
+  }
+}

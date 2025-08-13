@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DateTimePicker Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        .input-container {
+            position: relative;
+        }
+        .icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            pointer-events: none;
+            z-index: 1;
+        }
+        input[type="date"], input[type="time"] {
+            width: 100%;
+            padding: 12px 12px 12px 40px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            position: relative;
+            z-index: 2;
+            cursor: pointer;
+            color-scheme: light;
+        }
+        input[type="date"]:focus, input[type="time"]:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        input[type="date"]::-webkit-calendar-picker-indicator,
+        input[type="time"]::-webkit-calendar-picker-indicator {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            color: #666;
+            cursor: pointer;
+            opacity: 0.7;
+            z-index: 10;
+            width: 20px;
+            height: 20px;
+        }
+        input[type="date"]::-webkit-calendar-picker-indicator:hover,
+        input[type="time"]::-webkit-calendar-picker-indicator:hover {
+            opacity: 1;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 640px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .test-result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f0f9ff;
+            border-radius: 6px;
+            border-left: 4px solid #3b82f6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>DateTimePicker Component Test</h1>
+        <p>This test verifies that the date and time pickers work correctly with proper icon positioning and functionality.</p>
+        
+        <form>
+            <div class="grid">
+                <div class="form-group">
+                    <label for="test-date">📅 Test Date</label>
+                    <div class="input-container">
+                        <div class="icon">📅</div>
+                        <input type="date" id="test-date" name="test-date">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="test-time">🕐 Test Time</label>
+                    <div class="input-container">
+                        <div class="icon">🕐</div>
+                        <input type="time" id="test-time" name="test-time">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="test-result">
+                <h3>Test Instructions:</h3>
+                <ol>
+                    <li>Click on the date input field - the native date picker should open</li>
+                    <li>Click on the time input field - the native time picker should open</li>
+                    <li>Icons should be visible and not interfere with picker functionality</li>
+                    <li>The native picker indicators (arrows/calendar icons) should be clickable</li>
+                </ol>
+            </div>
+        </form>
+        
+        <script>
+            // Test functionality
+            document.getElementById('test-date').addEventListener('change', function(e) {
+                console.log('Date changed:', e.target.value);
+            });
+            
+            document.getElementById('test-time').addEventListener('change', function(e) {
+                console.log('Time changed:', e.target.value);
+            });
+        </script>
+    </div>
+</body>
+</html>
