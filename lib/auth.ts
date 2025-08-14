@@ -17,8 +17,6 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
   ],
-  // Add trusted host for Vercel deployment
-  trustHost: true,
   pages: {
     signIn: '/login',
     error: '/login', // Redirect to login page on error

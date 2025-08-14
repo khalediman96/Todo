@@ -7,6 +7,12 @@ export function checkRequiredEnvVars() {
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
   };
 
+  // NEXTAUTH_URL is required in production
+  if (process.env.NODE_ENV === 'production' && !process.env.NEXTAUTH_URL) {
+    console.error('❌ NEXTAUTH_URL is required in production environment');
+    console.error('🔧 Please set NEXTAUTH_URL to your production domain (e.g., https://todo-khalediman96.vercel.app)');
+  }
+
   const missingVars = Object.entries(requiredVars)
     .filter(([key, value]) => !value)
     .map(([key]) => key);
