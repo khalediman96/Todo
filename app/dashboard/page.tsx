@@ -35,24 +35,45 @@ export default function DashboardPage() {
     const fetchTodos = async () => {
       try {
         setLoading(true);
+        console.log('🔍 Dashboard: Fetching todos...');
         const response = await fetch('/api/todos');
+        console.log('🔍 Dashboard: Fetch response status:', response.status);
+        
         if (response.ok) {
           const data = await response.json();
+          console.log('🔍 Dashboard: Todos received:', {
+            count: data.length,
+            todos: data.map((t: Todo) => ({ id: t._id, title: t.title, status: t.status }))
+          });
           setTodos(data);
         } else {
-          console.error('Failed to fetch todos:', response.statusText);
+          const errorText = await response.text();
+          console.error('❌ Dashboard: Failed to fetch todos:', response.status, errorText);
+          showToast({
+            title: 'Error',
+            message: 'Failed to load todos',
+            type: 'error'
+          });
         }
       } catch (error) {
-        console.error('Error fetching todos:', error);
+        console.error('❌ Dashboard: Error fetching todos:', error);
+        showToast({
+          title: 'Error',
+          message: 'Failed to load todos',
+          type: 'error'
+        });
       } finally {
         setLoading(false);
       }
     };
 
     if (session) {
+      console.log('🔍 Dashboard: Session exists, fetching todos for user:', session.user?.email);
       fetchTodos();
+    } else {
+      console.log('🔍 Dashboard: No session, skipping todo fetch');
     }
-  }, [session]);
+  }, [session, showToast]);
 
   const handleToggleNotifications = async () => {
     try {
