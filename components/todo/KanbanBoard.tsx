@@ -189,14 +189,32 @@ export function KanbanBoard({ initialTodos = [], onTodosUpdate }: KanbanBoardPro
         completed: false
       };
 
+      console.log('🚀 Starting todo creation...');
+      console.log('📝 Todo data to send:', todoData);
+      console.log('📝 Todo data JSON:', JSON.stringify(todoData, null, 2));
+
       const response = await fetch('/api/todos', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(todoData),
       });
 
+      console.log('📡 Create todo response status:', response.status);
+      console.log('📡 Response headers:', Object.fromEntries(response.headers.entries()));
+      
+      const responseText = await response.text();
+      console.log('📡 Raw response text:', responseText);
+      
       if (response.ok) {
-        const newTodo = await response.json();
+        let newTodo;
+        try {
+          newTodo = JSON.parse(responseText);
+          console.log('✅ New todo created:', newTodo);
+        } catch (parseError) {
+          console.error('❌ Failed to parse JSON response:', parseError);
+          throw new Error('Invalid JSON response from server');
+        }
+        
         const updatedTodos = [newTodo, ...todos];
         setTodos(updatedTodos);
         onTodosUpdate?.(updatedTodos);
@@ -214,13 +232,22 @@ export function KanbanBoard({ initialTodos = [], onTodosUpdate }: KanbanBoardPro
           type: 'success'
         });
       } else {
-        throw new Error('Failed to create todo');
+        console.error('❌ Failed to create todo:', response.status, responseText);
+        let errorMessage = 'Failed to create todo';
+        try {
+          const errorData = JSON.parse(responseText);
+          errorMessage = errorData.error || errorMessage;
+        } catch {
+          // If response is not JSON, use the raw text
+          errorMessage = responseText || errorMessage;
+        }
+        throw new Error(`Failed to create todo: ${response.status} - ${errorMessage}`);
       }
     } catch (error) {
-      console.error('Error creating todo:', error);
+      console.error('❌ Error creating todo:', error);
       showToast({
         title: 'Error',
-        message: 'Failed to create todo. Please try again.',
+        message: error instanceof Error ? error.message : 'Failed to create todo. Please try again.',
         type: 'error'
       });
     } finally {

@@ -3,16 +3,25 @@ import { NextAuthOptions } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import { connectDB } from './mongodb';
 import { User } from './models/User';
+import { logEnvironmentInfo, checkRequiredEnvVars } from './utils/env-check';
+
+// Log environment info and check required variables
+logEnvironmentInfo();
+checkRequiredEnvVars();
 
 export const authOptions: NextAuthOptions = {
+  debug: process.env.NODE_ENV === 'development',
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
   ],
+  // Add trusted host for Vercel deployment
+  trustHost: true,
   pages: {
     signIn: '/login',
+    error: '/login', // Redirect to login page on error
   },
   session: {
     strategy: 'jwt',
@@ -50,32 +59,57 @@ export const authOptions: NextAuthOptions = {
             console.error('[signIn] Error message:', error.message);
             console.error('[signIn] Error stack:', error.stack);
           }
-          return false;
+          // Allow sign-in even if database operation fails
+          // The user will still be authenticated, just not saved to DB
+          console.warn('[signIn] Allowing sign-in despite database error');
+          return true;
         }
       }
       return true;
     },
     
     async jwt({ token, user }) {
+      console.log('[jwt] JWT callback called:', { hasUser: !!user, tokenExists: !!token });
       if (user) {
-        await connectDB();
-        const dbUser = await User.findOne({ email: user.email });
-        if (dbUser) {
-          token.id = dbUser._id.toString();
-          token.email = dbUser.email;
-          token.name = dbUser.name;
-          token.image = dbUser.image;
+        try {
+          console.log('[jwt] Attempting database connection for user:', user.email);
+          await connectDB();
+          const dbUser = await User.findOne({ email: user.email });
+          if (dbUser) {
+            console.log('[jwt] User found in database:', dbUser._id);
+            token.id = dbUser._id.toString();
+            token.email = dbUser.email;
+            token.name = dbUser.name;
+            token.image = dbUser.image;
+          } else {
+            console.log('[jwt] User not found in database, using OAuth data');
+            // If user not found in DB, use the OAuth user data
+            token.id = user.id || user.email; // Fallback ID
+            token.email = user.email;
+            token.name = user.name;
+            token.image = user.image;
+          }
+        } catch (error) {
+          console.error('[jwt] Database error, using OAuth user data:', error);
+          // If database fails, use the OAuth user data
+          token.id = user.id || user.email; // Fallback ID
+          token.email = user.email;
+          token.name = user.name;
+          token.image = user.image;
         }
       }
+      console.log('[jwt] Token prepared:', { id: token.id, email: token.email });
       return token;
     },
     
     async session({ session, token }) {
+      console.log('[session] Session callback called:', { hasToken: !!token });
       if (token) {
-        session.user.id = token.id;
-        session.user.email = token.email;
-        session.user.name = token.name;
-        session.user.image = token.image;
+        session.user.id = token.id as string;
+        session.user.email = token.email as string;
+        session.user.name = token.name as string;
+        session.user.image = token.image as string;
+        console.log('[session] Session user set:', { id: session.user.id, email: session.user.email });
       }
       return session;
     },

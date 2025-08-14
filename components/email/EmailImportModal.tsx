@@ -270,14 +270,14 @@ Please review the project proposal by Friday...`}
           />
         </div>
 
-        <div className="bg-blue-50 dark:bg-blue-900/40 border border-blue-200 dark:border-blue-700 rounded-lg p-4">
+        <div className="bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-600 rounded-lg p-4">
           <div className="flex items-start">
             <AlertCircle className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 mr-3" />
             <div className="text-sm">
-              <p className="font-medium text-blue-800 dark:text-blue-200 mb-1">
+              <p className="font-medium text-slate-800 dark:text-slate-200 mb-1">
                 Supported Email Formats
               </p>
-              <ul className="text-blue-700 dark:text-blue-300 space-y-1">
+              <ul className="text-slate-700 dark:text-slate-300 space-y-1">
                 <li>• Standard email with Subject, From, and Date headers</li>
                 <li>• JSON format with subject, sender, content, and receivedAt fields</li>
                 <li>• Plain text (will use first line as subject)</li>

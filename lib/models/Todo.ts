@@ -31,14 +31,15 @@ export interface ITodo extends Document {
 const TodoSchema = new Schema<ITodo>({
   title: {
     type: String,
-    required: true,
+    required: [true, 'Title is required'],
     trim: true,
-    maxlength: 200,
+    maxlength: [200, 'Title must be less than 200 characters'],
+    minlength: [1, 'Title cannot be empty']
   },
   description: {
     type: String,
     trim: true,
-    maxlength: 500,
+    maxlength: [500, 'Description must be less than 500 characters'],
   },
   completed: {
     type: Boolean,
@@ -47,10 +48,19 @@ const TodoSchema = new Schema<ITodo>({
   status: {
     type: String,
     default: 'new',
+    validate: {
+      validator: function(v: string) {
+        return ['new', 'in-progress', 'completed'].includes(v) || typeof v === 'string';
+      },
+      message: 'Status must be new, in-progress, completed, or a custom string'
+    }
   },
   priority: {
     type: String,
-    enum: ['low', 'medium', 'high'],
+    enum: {
+      values: ['low', 'medium', 'high'],
+      message: 'Priority must be low, medium, or high'
+    },
     default: 'medium',
   },
   dueDate: {
@@ -58,13 +68,19 @@ const TodoSchema = new Schema<ITodo>({
   },
   userId: {
     type: String,
-    required: true,
+    required: [true, 'User ID is required'],
     index: true,
   },
   tags: {
     type: [String],
     default: [],
     index: true,
+    validate: {
+      validator: function(v: string[]) {
+        return Array.isArray(v) && v.every(tag => typeof tag === 'string');
+      },
+      message: 'Tags must be an array of strings'
+    }
   },
   isRecurring: {
     type: Boolean,

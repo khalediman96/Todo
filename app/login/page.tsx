@@ -31,21 +31,13 @@ export default function LoginPage() {
   const handleGoogleSignIn = async () => {
     try {
       setLoading(true);
-      const result = await signIn('google', {
+      // Use simple redirect-based sign-in
+      await signIn('google', {
         callbackUrl: '/dashboard',
-        redirect: false,
       });
-
-      if (result?.error) {
-        console.error('Sign in error:', result.error);
-        alert('Failed to sign in. Please try again.');
-      } else if (result?.url) {
-        router.push(result.url);
-      }
     } catch (error) {
       console.error('Sign in error:', error);
       alert('An unexpected error occurred. Please try again.');
-    } finally {
       setLoading(false);
     }
   };
