@@ -5,7 +5,7 @@ Write-Host "===========================================" -ForegroundColor Green
 Write-Host ""
 
 # Stable Production URL
-$STABLE_URL = "https://khalediman96-todo.vercel.app"
+$STABLE_URL = "https://todo-pearl-alpha.vercel.app"
 
 Write-Host "STABLE PRODUCTION URL: $STABLE_URL" -ForegroundColor Cyan
 Write-Host ""

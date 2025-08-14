@@ -1,9 +1,22 @@
 {
   "buildCommand": "next build",
-  "devCommand": "next dev",
+  "devCommand": "next dev", 
   "installCommand": "npm install",
   "framework": "nextjs",
   "regions": ["cle1"],
+  "public": true,
+  "functions": {
+    "app/api/**": {
+      "maxDuration": 30
+    }
+  },
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "/login",
+      "permanent": false
+    }
+  ],
   "rewrites": [
     {
       "source": "/api/(.*)",
