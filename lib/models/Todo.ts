@@ -107,7 +107,6 @@ const TodoSchema = new Schema<ITodo>({
   },
   parentTodoId: {
     type: String,
-    index: true,
   },
   progress: {
     type: Number,
